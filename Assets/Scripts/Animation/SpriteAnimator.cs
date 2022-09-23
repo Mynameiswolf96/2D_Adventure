@@ -4,7 +4,6 @@ using UnityEngine;
 public class SpriteAnimator
 {
     private SpriteAnimationConfig _config;
-
     private Dictionary<SpriteRenderer, CustomAnimation> _activeAnimations = new Dictionary<SpriteRenderer, CustomAnimation>();
 
     public SpriteAnimator(SpriteAnimationConfig config)
@@ -25,15 +24,16 @@ public class SpriteAnimator
 
             animation.Track = track;
             animation.Sprites = _config.Sequences.Find(sequence => sequence.Track == track).Sprites;
+            animation.Counter = 0;
         }
         else
         {
-            _activeAnimations.Add(spriteRenderer,new CustomAnimation
+            _activeAnimations.Add(spriteRenderer, new CustomAnimation
             {
-                Track=track,
-                Sprites=_config.Sequences.Find(sequence=>sequence.Track==track).Sprites,
-                    Loop=loop,
-                    Speed=speed
+                Track = track,
+                Sprites = _config.Sequences.Find(sequence => sequence.Track == track).Sprites,
+                Loop = loop,
+                Speed = speed
             });
         }
     }
@@ -44,7 +44,7 @@ public class SpriteAnimator
             _activeAnimations.Remove(sprite);
     }
 
-    public void Uptade()
+    public void Update()
     {
         foreach (var animation in _activeAnimations)
         {

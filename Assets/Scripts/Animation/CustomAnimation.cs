@@ -6,7 +6,7 @@ public class CustomAnimation
     public Track Track;
     public List<Sprite> Sprites;
     public bool Loop = false;
-    public float Speed = 10f;
+    public float Speed = 10;
     public float Counter;
     public bool Sleeps;
 
@@ -29,4 +29,3 @@ public class CustomAnimation
         }
     }
 }
-

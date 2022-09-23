@@ -1,4 +1,4 @@
-public enum Track
+﻿public enum Track
 {
     idle,
     walk,
