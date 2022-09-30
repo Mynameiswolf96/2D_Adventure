@@ -5,70 +5,56 @@ public class MainHeroWalker
     private const string Horizontal = nameof(Horizontal);
     private const string Vertical = nameof(Vertical);
 
-    private float _yVelocity;
-
-    private CharacterView _characterView;
-    private SpriteAnimator _spriteAnimator;
+    private readonly CharacterView _characterView;
+    private readonly SpriteAnimator _spriteAnimator;
+    private ContactsPoller _contactsPoller;
 
     public MainHeroWalker(CharacterView characterView, SpriteAnimator spriteAnimator)
     {
         _characterView = characterView;
         _spriteAnimator = spriteAnimator;
+
+        _contactsPoller = new ContactsPoller(_characterView.Collider);
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
         var doJump = Input.GetAxis(Vertical) > 0;
         var xAxisInput = Input.GetAxis(Horizontal);
 
+        _contactsPoller.Update();
+
         var isGoSideWay = Mathf.Abs(xAxisInput) > _characterView.MovingTresh;
 
         if (isGoSideWay)
-            GoSideWay(xAxisInput);
+            _characterView.SpriteRenderer.flipX = xAxisInput < 0;
 
-        if (IsGrounded())
+        var newVelocityX = 0f;
+
+        if (isGoSideWay &&
+            (xAxisInput > 0 || !_contactsPoller.HasLeftContacts) &&
+            (xAxisInput < 0 || !_contactsPoller.HasRightContacts))
         {
-            _spriteAnimator.StartAnimation(_characterView.SpriteRenderer, isGoSideWay ? Track.walk : Track.idle, true, _characterView.AnimationsSpeed);
-
-            if (doJump && Mathf.Approximately(_yVelocity, 0))
-            {
-                _yVelocity = _characterView.JumpStartSpeed;
-            }
-            else if(_yVelocity < 0)
-            {
-                _yVelocity = 0;
-                MovementCharacter();
-            }
+            newVelocityX = Time.fixedDeltaTime * _characterView.WalkSpeed * (xAxisInput < 0 ? -1 : 1);
         }
-        else
+
+        _characterView.Rigidbody.velocity = _characterView.Rigidbody.velocity.Change(x: newVelocityX);
+
+        if (_contactsPoller.IsGrounded && doJump 
+            && _characterView.Rigidbody.velocity.y <= _characterView.FlyTresh)
         {
-            LandingCharater();
+            _characterView.Rigidbody.AddForce(Vector2.up * _characterView.JumpStartSpeed);
         }
-    }
 
-    private void LandingCharater()
-    {
-        _yVelocity += _characterView.Acceleration * Time.deltaTime;
-
-        if (Mathf.Abs(_yVelocity) > _characterView.FlyTresh)
-            _spriteAnimator.StartAnimation(_characterView.SpriteRenderer, Track.jump, true, _characterView.AnimationsSpeed);
-
-        _characterView.transform.position += Vector3.up * (Time.deltaTime * _yVelocity);
-    }
-
-    private void MovementCharacter()
-    {
-        _characterView.transform.position = _characterView.transform.position.Change(y: _characterView.GroundLevel);
-    }
-
-    private bool IsGrounded()
-    {
-        return _characterView.transform.position.y <= _characterView.GroundLevel && _yVelocity <= 0;
-    }
-
-    private void GoSideWay(float xAxisInput)
-    {
-        _characterView.transform.position += Vector3.right * (Time.deltaTime * _characterView.WalkSpeed * (xAxisInput < 0 ? -1 : 1));
-        _characterView.SpriteRenderer.flipX = xAxisInput < 0;
+        if (_contactsPoller.IsGrounded)
+        {
+            _spriteAnimator.StartAnimation(_characterView.SpriteRenderer, isGoSideWay ? Track.walk : Track.idle, 
+                true, _characterView.AnimationsSpeed);
+        }
+        else if (Mathf.Abs(_characterView.Rigidbody.velocity.y) > _characterView.FlyTresh)
+        {
+            _spriteAnimator.StartAnimation(_characterView.SpriteRenderer, Track.jump, 
+                true, _characterView.AnimationsSpeed);
+        }
     }
 }
