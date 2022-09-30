@@ -4,20 +4,11 @@ public class BulletView : MonoBehaviour
 {
     [SerializeField]
     private SpriteRenderer _spriteRenderer;
-    
-    [Header("Settings")]
-    
-    private float _radius = 0.3f;
-    
-    private float _groundLevel = 0;
-    
-    private float _acceleration = -10;
 
-    public float Radius => _radius;
-
-    public float GroundLevel => _groundLevel;
-
-    public float Acceleration => _acceleration;
+    [SerializeField]
+    private Rigidbody2D _rigidbody;
+    
+    public Rigidbody2D Rigidbody => _rigidbody;
 
     public void SetVisible(bool visible)
     {
