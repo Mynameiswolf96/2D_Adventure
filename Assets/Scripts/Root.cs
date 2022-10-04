@@ -2,9 +2,14 @@
 using UnityEngine;
 
 public class Root : MonoBehaviour
-{
+{ 
     [SerializeField]
-    private Camera _camera;
+     private AiConfig _config;
+     [SerializeField]
+     private EnemyView _enemyView;
+     
+     private SmplePatrolAi _smplePatrolAi;
+     [SerializeField] private Camera _camera;
 
     [SerializeField]
     private SpriteRenderer _background;
@@ -40,6 +45,7 @@ public class Root : MonoBehaviour
         _mainHeroWalker = new MainHeroWalker(_characterView, _spriteAnimator);
         _aimingMuzzle = new AimingMuzzle(_cannonView.transform, _characterView.transform);
         _bulletsEmitter = new BulletsEmitter(_bullets, _cannonView.MuzzleTransform);
+        //_smplePatrolAi = new SmplePatrolAi(_enemyView, new SmplePatrolAiModel(_config));
     }
 
     private void Update()
@@ -53,6 +59,7 @@ public class Root : MonoBehaviour
     private void FixedUpdate()
     {
         _mainHeroWalker.FixedUpdate();
+        //_smplePatrolAi.FixedUpdate();
     }
 
     private void OnDestroy()
