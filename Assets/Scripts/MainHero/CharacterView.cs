@@ -5,6 +5,12 @@ public class CharacterView : MonoBehaviour
     [SerializeField]
     private SpriteRenderer _spriteRenderer;
 
+    [SerializeField]
+    private Rigidbody2D _rigidbody;
+
+    [SerializeField]
+    private Collider2D _collider;
+
     [Header("Settings")]
     [SerializeField]
     private float _walkSpeed = 1;
@@ -35,4 +41,6 @@ public class CharacterView : MonoBehaviour
     public float FlyTresh=> _flyTresh;
     public float GroundLevel => _groundLevel;
     public float Acceleration => _acceleration;
+    public Rigidbody2D Rigidbody => _rigidbody;
+    public Collider2D Collider => _collider;
 }
