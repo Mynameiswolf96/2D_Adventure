@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Root : MonoBehaviour
 { 
-    [SerializeField]
+     [SerializeField]
      private AiConfig _config;
      [SerializeField]
      private EnemyView _enemyView;
